@@ -346,10 +346,10 @@ function getNextId() {return products[products.length - 1].id + 1;}
 let router = new VueRouter(
 { routes: [
   { path: '/', component: ProductsList }, // products list
-  { path: '/item/:item_id', component: Product, name: 'item' }, // Hero details
-  { path: '/item-add', component: ProductAdd }, // Add new hero
-  { path: '/item/:item_id/edit', component: ProductEdit, name: 'item-edit' }, // Edit hero
-  { path: '/item/:item_id/delete', component: ProductDelete, name: 'item-delete' // Delete hero
+  { path: '/item/:item_id', component: Product, name: 'item' }, // details
+  { path: '/item-add', component: ProductAdd }, // Add new item
+  { path: '/item/:item_id/edit', component: ProductEdit, name: 'item-edit' }, // Edit item
+  { path: '/item/:item_id/delete', component: ProductDelete, name: 'item-delete' // Delete item
   }] });
 
 
