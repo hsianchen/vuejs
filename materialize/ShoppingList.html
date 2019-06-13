@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+
+<title>vue.js</title>
+<!--<link rel='stylesheet' href='https://fonts.googleapis.com/css?family=Montserrat:400,700'>-->
+<style>
+      *,
+*:after,
+*:before {
+  box-sizing: inherit;
+}
+html {
+  box-sizing: border-box;
+  font-size: 62.5%;
+}
+body {
+  margin: 0;
+  font-family: 'Montserrat', 'Arial', sans-serif;
+  font-size: 1.8rem;
+  color: #111;
+  background: #f4f4f4;
+}
+h1,
+h2 {
+  margin: 0 0 1rem 0;
+  font-weight: normal;
+  text-align: center;
+}
+b {
+  font-weight: bold;
+}
+p {
+  margin: 0;
+  line-height: 2;
+}
+a {
+  color: #111;
+  border-bottom: 0.1rem solid rgba(0,0,0,0.1);
+  text-decoration: none;
+  transition: all 0.3s ease;
+}
+a:hover {
+  color: #f04;
+  border-bottom: 0.1rem solid #f04;
+}
+hr {
+  width: 70%;
+  margin: 0 auto 2rem;
+  border: 0;
+  border-bottom: 0.1rem solid rgba(0,0,0,0.1);
+}
+form label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-weight: bold;
+}
+form input,
+form textarea {
+  width: 100%;
+  min-width: 100%;
+  max-width: 100%;
+  min-height: 2rem;
+  margin: 0 0 1rem 0;
+  padding: 0.5rem;
+  font: inherit;
+  font-size: 1.6rem;
+  border: 0.1rem solid rgba(0,0,0,0.1);
+}
+table {
+  width: 100%;
+  margin: 2rem 0 4rem 0;
+  border-spacing: 0;
+}
+table td,
+table th {
+  border-bottom: 0.1rem solid rgba(0,0,0,0.05);
+}
+table th {
+  padding: 2rem 1rem;
+  text-align: left;
+}
+table td {
+  padding: 1.8rem 1rem;
+  transition: all 0.3s ease;
+}
+table td .btn {
+  display: inline;
+}
+table tr:hover td {
+  background: rgba(0,0,0,0.03);
+}
+.btn {
+  display: block;
+  width: 100%;
+  margin: 2rem 0 2rem 0;
+  padding: 1rem 2rem;
+  color: #111;
+  background: transparent;
+  border: 0.1rem solid #111;
+  outline: 0;
+  border-radius: 0.3rem;
+  font: inherit;
+  font-weight: bold;
+  line-height: 1;
+  cursor: pointer;
+  text-align: center;
+  text-decoration: none;
+  user-select: none;
+  transition: all 0.25s ease;
+}
+.btn:visited {
+  color: #111;
+}
+.btn:hover,
+.btn:focus {
+  border: 0.1rem solid #f04;
+  color: #f04;
+}
+.btn.btn-main {
+  border: 0;
+  color: #fff;
+  background: #44a;
+}
+.btn.btn-main:visited {
+  color: #fff;
+}
+.btn.btn-main:hover,
+.btn.btn-main:focus {
+  background: #f04;
+}
+.grid {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+#app {
+  width: 70rem;
+  margin: 4rem auto;
+  padding: 4rem;
+  border-radius: 0.3rem;
+  background: #fff;
+  box-shadow: 0 0 2rem rgba(0,0,0,0.1), 0 0 3rem rgba(0,0,0,0.03);
+}
+#app section {
+  width: 100%;
+}
+@media only screen and (max-width: 48rem) {
+  #app {
+    width: 90%;
+  }
+}
+
+    </style>
+
+</head>
+<body translate="no">
+<main id="app" class="grid">
+<h1><b>Shopping</b> list</h1>
+<hr>
+<router-view></router-view>
+</main>
+<template id="products-list">
+<section>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Description</th>
+<th>Num</th>
+<th>Actions</th>
+</tr>
+</thead>
+<tbody>
+<tr v-for="item in filteredProducts">
+<td>
+<router-link v-bind:to="{name: 'item', params: {item_id: item.id}}">{{ item.name }}</router-link>
+</td>
+<td>{{ item.description }}</td>
+<td>{{ item.num }}</td>
+<td>
+<router-link v-bind:to="{name: 'item-edit', params: {item_id: item.id}}">
+Edit
+</router-link>
+<span> / </span>
+<router-link v-bind:to="{name: 'item-delete', params: {item_id: item.id}}">
+Delete
+</router-link>
+</td>
+</tr>
+</tbody>
+</table>
+<router-link class="btn btn-main" v-bind:to="{path: '/item-add'}">
+Add Product
+</router-link>
+</section>
+</template>
+<template id="item">
+<section class="grid">
+<h2>{{ item.name }}</h2>
+<p>
+<b>Description:</b> {{ item.description }}
+<br>
+<b>Num:</b> {{ item.num }}
+</p>
+<br>
+<router-link v-bind:to="'/'">Back</router-link>
+</section>
+</template>
+<template id="item-add">
+<section>
+<h2>Add Product</h2>
+<form v-on:submit.prevent="createItem">
+<label>Name</label>
+<input id="add-name" v-model="item.name" required />
+<label>Description</label>
+<textarea id="add-description" rows="5" v-model="item.description" required></textarea>
+<label>Num</label>
+<input type="number" min="1" v-model="item.num" required />
+<button type="submit" class="btn btn-main">Create</button>
+<router-link class="btn" v-bind:to="'/'">Cancel</router-link>
+</form>
+</section>
+</template>
+<template id="item-edit">
+<section>
+<h2>Edit Product</h2>
+<form v-on:submit.prevent="updateItem">
+<label>Name</label>
+<input v-model="item.name" required />
+<label>Description</label>
+<textarea rows="5" v-model="item.description"></textarea>
+<label>Num</label>
+<input type="number" v-model="item.num" />
+<button type="submit" class="btn btn-main">Update</button>
+<router-link class="btn" v-bind:to="'/'">Cancel</router-link>
+</form>
+</section>
+</template>
+<template id="item-delete">
+<section>
+<h2>Delete <b>{{ item.name }}</b>?</h2>
+<form v-on:submit.prevent="deleteItem">
+<p>確定要從清單中刪除
+<b>{{ item.name }}</b> 嗎?
+</p>
+<button type="submit" class="btn btn-main">Delete</button>
+<router-link class="btn" v-bind:to="'/'">Cancel</router-link>
+</form>
+</section>
+</template>
+<script src="https://static.codepen.io/assets/common/stopExecutionOnTimeout-de7e2ef6bfefd24b79a3f68b414b87b8db5b08439cac3f1012092b2290c719cd.js"></script>
+<script src='https://cdnjs.cloudflare.com/ajax/libs/vue/2.5.17/vue.min.js'></script>
+<script src='https://cdnjs.cloudflare.com/ajax/libs/vue-router/3.0.1/vue-router.min.js'></script>
+<script id="rendered-js">
+      // [ Data ]
+
+let products = [
+{ id: 0, name: '蘋果', description: 'weekly fruits', num: 5 },
+{ id: 1, name: '魚', description: '清蒸', num: 1 },
+{ id: 2, name: '空心菜', description: '清炒', num: 1 },
+{ id: 3, name: '豬肉', description: '蒜泥白肉', num: 1 }
+];
+
+
+// [ Components ]
+
+let ProductsList = Vue.extend({
+  template: '#products-list',
+  data: function () {return { products };},
+  computed: { filteredProducts: function () {return this.products;} } });
+
+
+let Product = Vue.extend({
+  template: '#item',
+  data: function () {return { item: findProduct(this.$route.params.item_id) };} });
+
+
+let ProductAdd = Vue.extend({
+  template: '#item-add',
+  data: function () {return { item: { name: '', description: '', num: 1 } };},
+  methods: {
+    createItem: function () {
+      let item = this.item;
+      products.push({
+        id: getNextId(),
+        name: item.name,
+        description: item.description,
+        num: item.num });
+
+      router.push('/');
+    } } });
+
+
+
+let ProductEdit = Vue.extend({
+  template: '#item-edit',
+  data: function () {
+    return { item: findItem(this.$route.params.item_id) };
+  },
+  methods: {
+    updateItem: function () {
+      let item = this.item;
+      products[findItemKey(item.id)] = {
+        id: item.id,
+        name: item.name,
+        description: item.description,
+        num: item.num };
+
+      router.push('/');
+    } } });
+
+
+
+let ProductDelete = Vue.extend({
+  template: '#item-delete',
+  data: function () {
+    return { item: findItem(this.$route.params.item_id) };
+  },
+  methods: {
+    deleteItem: function () {
+      products.splice(findItemKey(this.$route.params.item_id), 1);
+      router.push('/');
+    } } });
+
+
+
+// [ Database connectors ]
+
+function findItem(id) {
+  for (let i = 0; i < products.length; ++i) {if (window.CP.shouldStopExecution(0)) break;
+    if (products[i].id === id) return products[i];
+  }window.CP.exitedLoop(0);
+}
+function findItemKey(id) {
+  for (let i = 0; i < products.length; ++i) {if (window.CP.shouldStopExecution(1)) break;
+    if (products[i].id === id) return i;
+  }window.CP.exitedLoop(1);
+}
+function getNextId() {return products[products.length - 1].id + 1;}
+
+// [ App + Router ]
+
+let router = new VueRouter(
+{ routes: [
+  { path: '/', component: ProductsList }, // products list
+  { path: '/item/:item_id', component: Product, name: 'item' }, // Hero details
+  { path: '/item-add', component: ProductAdd }, // Add new hero
+  { path: '/item/:item_id/edit', component: ProductEdit, name: 'item-edit' }, // Edit hero
+  { path: '/item/:item_id/delete', component: ProductDelete, name: 'item-delete' // Delete hero
+  }] });
+
+
+let vm = new Vue({ router }).$mount('#app');
+      //# sourceURL=pen.js
+    </script>
+</body>
+</html>
